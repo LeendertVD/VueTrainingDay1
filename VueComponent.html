@@ -1,0 +1,106 @@
+
+<div id="el">
+    <p>
+        <label v-for="m in modes">
+            <input type="radio" :value="m" v-model="mode" />{{m}}                      
+        </label>
+    </p>
+    <todo v-for="(todo, index) in filteredTodos" 
+        :todo.sync="todo" 
+        key="todo.id"
+        @toggle="toggleTodo(todo)"
+        @edit="editTodo"
+        @remove="removeTodo(index)">
+    </todo>
+</div>
+    
+<script src="http://unpkg.com/vue"></script>
+<style>
+    .isActive {
+        text-decoration: line-through;
+    }
+</style>
+<script>
+    console.log(Vue.version);
+
+    Vue.config.productionTip = false;
+
+    Vue.component('todo', {
+        //options
+        template: 
+            `
+            <div>
+                <input type="checkbox" v-model="todo.done" :id="todo.id" @click="$emit('toggle')"></input>
+                <label v-if="!isEditing" for="todo.id" :class="{isActive: todo.done}" @dblclick="editItem(todo)">{{todo.text}}</label>
+                <input v-if="isEditing" type="text" v-model="currentText" />
+                <button v-if="isEditing" @click="saveItem(todo)">Save</button>
+                <button v-if="isEditing" @click="cancel(todo)">Cancel</button>
+                <button @click="$emit('remove')">Remove</button>
+            </div>
+            `,
+        props: {
+            todo: {
+                type: Object,
+                required: true,
+                default: () => ({text: 'default'})
+            }
+        },
+        data() {
+            return {
+                isEditing: false,
+                currentText: '',
+            }
+        },
+        methods: {
+            editItem(todo) {
+                this.isEditing = true;
+                this.currentText = todo.text;
+            },
+            saveItem(todo) {
+                this.$emit('edit', todo, this.currentText);
+                this.isEditing = false;
+            },
+            cancel(todo) {
+                this.isEditing = !this.isEditing;
+            }
+        }
+    })
+
+    new Vue({
+        el: "#el",
+        data: {
+            todos: [
+                {id: 1, done: true, text: 'Learn Javascript'}, 
+                {id: 2, done: true, text: 'Learn JQuery'}, 
+                {id: 3, done: false, text: 'Learn Vue'}],
+            modes: ['All', 'Done', 'NotDone'],
+            mode: 'All',
+        },
+        methods: {
+            toggleTodo(todo) {
+                todo.done = !todo.done;
+            },
+            editTodo(todo, text) {
+                todo.text = text;
+            },
+            removeTodo(index) {
+                this.todos.splice(index, 1);
+            },
+        },
+        computed: {
+            filteredTodos(mode) {
+                switch (this.mode) {
+                    case 'All':
+                        return this.todos;
+                    case 'NotDone':
+                        return this.todos.filter(x => !x.done);
+                    case 'Done':
+                        return this.todos.filter(x => x.done);
+                    default:
+                        return this.todos;
+                }
+            }
+        }
+    })
+    
+    </script>

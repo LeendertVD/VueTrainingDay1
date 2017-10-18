@@ -1,0 +1,50 @@
+
+<div id="app">
+    <my-select v-model="selected">
+        <option>Option 1</option>
+        <option>Option 2</option>
+        <option>Option 3</option>
+</div>
+
+<script src="http://unpkg.com/vue"></script>
+<style>
+    .active {
+        color: green;
+    }
+    .done {
+        text-decoration: line-through;
+    }
+</style>
+<script>
+    console.log(Vue.version);
+
+    Vue.config.productionTip = false;
+
+    Vue.component('todo', {
+        //options
+        template: 
+            `
+            <div>
+                <input type="option" v-model="selected">
+                    <slot></slot>
+                </input>
+            </div>
+            `,
+        props: {
+            value: {
+                type: string,
+                default: '',
+            }
+        },
+        data() {
+            return {
+            }
+        },
+        methods: {
+        }
+    })
+
+    const vm = new Vue({
+    }).$mount('#app');
+
+</script>

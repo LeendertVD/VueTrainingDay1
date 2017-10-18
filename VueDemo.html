@@ -1,0 +1,55 @@
+<html>
+<body>
+    <div id="app">
+        {{ hello }}
+        {{ hello.split('').reverse().join('') }}
+        {{ ok ? 'true' : 'false'}}
+        <span v-html="someHTML"></span>
+        <div v-pre>This will not be compiled</div>
+        <div :id='someId'>Div bind with some id</div>
+        <div :class="{active: isActive}" :style="{ fontSize: `${fontsize}px`}">Some text</div>
+        <div v-if="toggle">If</div>
+        <div v-else>Else</div>
+        <div v-show="toggle">Show Me</div>
+        <div v-for="item, index in arr" :key="item.id">
+            <span>{{index}} - {{item.text}}</span>
+        </div>
+        <button @click="reverse">reverse text</button>
+    </div>
+
+    <script src="http://unpkg.com/vue"></script>
+    <style>
+        .active {
+            color: green;
+        }
+    </style>
+    <script>
+        console.log(Vue.version);
+
+        Vue.config.productionTip = false;
+
+        const vm = new Vue({
+            //el: "#app",
+            data: {
+                hello: 'hello folks',
+                ok: true,
+                someHTML: '<strong>This is bold</strong>',
+                someId: 'someId123',
+                isActive: true,
+                fontsize: 23,
+                toggle: false,
+                arr: [
+                    {id: 1, text: 'text 1'}, 
+                    {id: 2, text: 'text 2'}, 
+                    {id: 3, text: 'text 3'}],
+            },
+            methods: {
+                reverse() {
+                    this.hello = this.hello.split('').reverse().join('');
+                },
+            }
+        }).$mount('#app');
+
+    </script>
+</body>
+</html>

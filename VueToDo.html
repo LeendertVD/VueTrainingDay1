@@ -1,0 +1,83 @@
+
+<div id="app">
+    <p>
+        <label v-for="m in modes">
+            <input type="radio" :value="m" v-model="mode" />{{m}}                      
+        </label>
+    </p>
+    <div v-for="item, index in filteredTodos" :key="item.id">
+        <input type="checkbox" v-model="item.done" :id="item.id" @click="toggleState(item)"></input>
+        <label v-if="!item.isEditable" for="item.id" :class="{done: item.done}" @click="toggleState(item)">{{item.text}}</label>
+        <input v-if="item.isEditable" type="text" v-model="item.text" />
+        <button @click="editText(item)">{{ item.isEditable ? 'Save' : 'Edit item'}}</button>
+        <button @click="removeItem(index)">Remove</button>
+    </div>
+    <input type="text" v-model="newItem" />
+    <button @click="addToDo">Add To Do item</button>
+    <button @click="removeDoneToDos">Remove all done To Do's</button>
+</div>
+
+<script src="http://unpkg.com/vue"></script>
+<style>
+    .active {
+        color: green;
+    }
+    .done {
+        text-decoration: line-through;
+    }
+</style>
+<script>
+    console.log(Vue.version);
+
+    Vue.config.productionTip = false;
+
+    const vm = new Vue({
+        //el: "#app",
+        data: {
+            toggle: false,
+            newItem: '',
+            todos: [
+                {id: 1, done: true, text: 'Learn Javascript', isEditable: false}, 
+                {id: 2, done: true, text: 'Learn JQuery', isEditable: false}, 
+                {id: 3, done: false, text: 'Learn Vue', isEditable: false}],
+            modes: ['All', 'Done', 'NotDone'],
+            mode: 'All',
+        },
+        methods: {
+            toggleState(item) {
+                item.done = !item.done;
+            },
+            addToDo() {
+                if (this.newItem !== '') {
+                    this.todos.push({id: 0, done: false, text: this.newItem})
+                }
+
+                this.newItem = '';
+            },
+            removeDoneToDos() {
+                this.todos = this.todos.filter(x => !x.done);                            
+            },
+            editText(item) {
+                item.isEditable = !item.isEditable;
+            },
+            removeItem(index) {
+                this.todos.splice(index, 1);
+            },
+        },
+        computed: {
+            filteredTodos(mode) {
+                switch (this.mode) {
+                    case 'All':
+                        return this.todos;
+                    case 'NotDone':
+                        return this.todos.filter(x => !x.done);
+                    case 'Done':
+                        return this.todos.filter(x => x.done);
+                    default:
+                        return this.todos;
+                }
+            }
+        }
+    }).$mount('#app');
+
+</script>
